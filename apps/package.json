@@ -26,9 +26,10 @@
     "lint:fix": "npm run lint -- --fix",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook -o docs",
-    "test": "jest --ci",
+    "test": "jest --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=cobertura --coverageReporters=html",
     "test:coverage": "npm run test -- --coverage",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "prepare": "cd .. && husky install"
   },
   "devDependencies": {
     "@babel/core": "^7.7.2",
@@ -66,7 +67,9 @@
     "eslint-plugin-testcafe-community": "^1.1.0",
     "file-loader": "4.2.0",
     "html-webpack-plugin": "3.2.0",
+    "husky": "^8.0.1",
     "jest": "24.9.0",
+    "jest-junit": "^13.2.0",
     "prettier": "^1.19.1",
     "qrcode.react": "^1.0.0",
     "react-docgen-typescript-loader": "^3.4.0",
