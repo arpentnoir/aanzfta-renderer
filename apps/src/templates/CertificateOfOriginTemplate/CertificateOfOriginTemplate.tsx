@@ -1,24 +1,25 @@
 import React, { FunctionComponent } from "react";
+import { Document, Page } from "react-pdf";
 import { TemplateProps } from "@govtechsg/decentralized-renderer-react-components";
-import { css } from "@emotion/core";
-import { CustomTemplateCertificate } from "../samples";
 
-const style = css`
-  pre {
-    background-color: lightgray;
-    overflow-wrap: anywhere;
-    white-space: break-spaces;
-  }
-`;
+import { CertificateOfOrigin } from "../samples/certificateOfOriginTemplateSample";
 
-export const CertificateOfOriginTemplate: FunctionComponent<TemplateProps<CustomTemplateCertificate> & {
+export const CertificateOfOriginTemplate: FunctionComponent<TemplateProps<CertificateOfOrigin> & {
   className?: string;
 }> = ({ document, className = "" }) => {
   return (
-    <div css={style} className={className} id="custom-template">
+    <div className={className} id="certificate-of-origin-template">
       <div>
-        <h1>asdasdasd</h1>
-        <pre>{JSON.stringify(document, null, 2)}</pre>
+        <h1>Certificate of Origin</h1>
+        {/* <pre>{JSON.stringify(document, null, 2)}</pre> */}
+        <div>
+          <Document
+            file={document.credentialSubject.supplyChainConsignment?.documentAttachment.documentAttachment}
+            onLoadError={console.error}
+          >
+            <Page pageNumber={1} className="border border-cloud-200" />
+          </Document>
+        </div>
       </div>
     </div>
   );

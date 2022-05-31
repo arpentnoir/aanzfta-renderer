@@ -14,19 +14,6 @@ stages:
     variables:
       disable.coverage.autogenerate: true
     jobs:
-      - job: sonarqube
-        steps:
-          - task: SonarQubePrepare@5
-            inputs:
-              SonarQube: "sonarqube-sandbox"
-              scannerMode: "CLI"
-              configMode: "manual"
-              cliProjectKey: $(Build.Repository.Name)
-              cliProjectName: $(Build.Repository.Name)
-              cliSources: "."
-          - task: SonarQubeAnalyze@5
-          - task: SonarQubePublish@5
-
       - job: build_test
         steps:
           - task: NodeTool@0
@@ -46,6 +33,27 @@ stages:
               make unit-test
             displayName: Run unit tests
 
+          - task: SonarQubePrepare@5
+            inputs:
+              SonarQube: "sonarqube-sandbox"
+              scannerMode: "CLI"
+              configMode: "manual"
+              cliProjectKey: $(Build.Repository.Name)
+              cliProjectName: $(Build.Repository.Name)
+          - task: SonarQubeAnalyze@5
+          - task: SonarQubePublish@5
+
+          - bash: |
+              make build
+            condition: and(succeeded(), eq(variables.isMain, 'true'))
+            displayName: Build dist bundle
+
+          - task: PublishPipelineArtifact@1
+            condition: and(succeeded(), eq(variables.isMain, 'true'))
+            inputs:
+              targetPath: $(System.DefaultWorkingDirectory)/apps/dist
+              artifactName: "distributed-renderer-build"
+
           - task: PublishTestResults@2
             inputs:
               testResultsFormat: "JUnit"
@@ -56,78 +64,59 @@ stages:
           - publish: $(System.DefaultWorkingDirectory)/apps/coverage/cobertura-coverage.xml
             artifact: coverage
 
-      # - job: publish_code_coverage
-      #   dependsOn:
-      #     - build_test
-      #   steps:
-      #     - task: DownloadPipelineArtifact@2
-      #       inputs:
-      #         artifact: coverage
-      #         patterns: "**/cobertura-coverage.xml"
-      #         path: $(System.DefaultWorkingDirectory)/CoverageResults/apps
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: "Cobertura" # Available options: 'JaCoCo', 'Cobertura'
+              summaryFileLocation: $(System.DefaultWorkingDirectory)/CoverageResults/apps/coverage/cobertura-coverage.xml
 
-      #     - task: reportgenerator@5
-      #       inputs:
-      #         reports: "**/cobertura-coverage.xml"
-      #         reporttypes: "HtmlInline_AzurePipelines;Cobertura"
-      #         targetdir: "$(System.DefaultWorkingDirectory)/Coverage"
+  - stage: deploy
+    dependsOn: build_test
+    condition: and(succeeded(), eq(variables.isMain, 'true'))
+    pool:
+      vmImage: ubuntu-latest
+    jobs:
+      - job: deploy
+        steps:
+          - task: AzureKeyVault@2
+            inputs:
+              connectedServiceName: "gs-ha-dvp-serviceconnection"
+              keyVaultName: "gs-ha-dvp"
+              secretsFilter: "*"
+              runAsPreJob: true
 
-      #     - task: PublishCodeCoverageResults@1
-      #       inputs:
-      #         codeCoverageTool: "Cobertura"
-      #         summaryFileLocation: "$(System.DefaultWorkingDirectory)/Coverage/Cobertura.xml"
-      #         reportDirectory: "$(System.DefaultWorkingDirectory)/Coverage"
-      #         failTaskOnFailedTests: true
-      #       displayName: Publish code coverage results to AzDo
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              source: "current" # Options: current, specific
+              path: $(System.DefaultWorkingDirectory)/artifacts
 
-  # - stage: deploy
-  #   dependsOn: build_test
-  #   condition: and(succeeded(), eq(variables.isMain, 'true'))
-  #   pool:
-  #     vmImage: ubuntu-latest
-  #   jobs:
-  #     - job: deploy
-  #       steps:
-  #         - task: AzureKeyVault@2
-  #           inputs:
-  #             connectedServiceName: "gs-ha-dvp-serviceconnection"
-  #             keyVaultName: "gs-ha-dvp"
-  #             secretsFilter: "*"
-  #             runAsPreJob: true
+          - task: NodeTool@0
+            displayName: Set Node Version
+            inputs:
+              versionSpec: 14.x
 
-  #         - task: DownloadPipelineArtifact@2
-  #           inputs:
-  #             source: "current" # Options: current, specific
-  #             path: $(System.DefaultWorkingDirectory)/artifacts
+          - bash: |
+              # exit if a command returns a non-zero exit code and also print the commands and their args as they are executed
+              set -e -x
 
-  #         - task: NodeTool@0
-  #           displayName: Set Node Version
-  #           inputs:
-  #             versionSpec: 14.x
+              # Download and install required tools pulumi
+              rm -rf $HOME/.pulumi
+              rm -rf /usr/local/bin/pulumi*
+              curl -fsSL https://get.pulumi.com | sh -s -- --version 3.30.0
+              /bin/cp -rf $HOME/.pulumi/bin/* /usr/local/bin
 
-  #         - bash: |
-  #             # exit if a command returns a non-zero exit code and also print the commands and their args as they are executed
-  #             set -e -x
+              cd infrastructure && npm install
+            displayName: Install pulumi
 
-  #             # Download and install required tools pulumi
-  #             rm -rf $HOME/.pulumi
-  #             rm -rf /usr/local/bin/pulumi*
-  #             curl -fsSL https://get.pulumi.com | sh -s -- --version 3.30.0
-  #             /bin/cp -rf $HOME/.pulumi/bin/* /usr/local/bin
+          - bash: |
+              make pulumi-preview
+            displayName: Run `pulumi preview`
+            env:
+              AWS_ACCESS_KEY_ID: $(AWS-ACCESS-KEY-ID)
+              AWS_SECRET_ACCESS_KEY: $(aws-secret-access-key)
 
-  #             cd infrastructure && npm install
-  #           displayName: Install pulumi
-
-  #         - bash: |
-  #             make pulumi-preview
-  #           displayName: Run `pulumi preview`
-  #           env:
-  #             AWS_ACCESS_KEY_ID: $(AWS-ACCESS-KEY-ID)
-  #             AWS_SECRET_ACCESS_KEY: $(aws-secret-access-key)
-
-  #         - bash: |
-  #             make pulumi-up
-  #           displayName: Run `pulumi up`
-  #           env:
-  #             AWS_ACCESS_KEY_ID: $(AWS-ACCESS-KEY-ID)
-  #             AWS_SECRET_ACCESS_KEY: $(aws-secret-access-key)
+          - bash: |
+              make pulumi-up
+            displayName: Run `pulumi up`
+            env:
+              AWS_ACCESS_KEY_ID: $(AWS-ACCESS-KEY-ID)
+              AWS_SECRET_ACCESS_KEY: $(aws-secret-access-key)

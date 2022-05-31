@@ -13,7 +13,8 @@
     "debug": "4.1.1",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-hot-loader": "^4.12.18"
+    "react-hot-loader": "^4.12.18",
+    "react-pdf": "^5.7.2"
   },
   "scripts": {
     "build": "npm run check-types && cross-env NODE_ENV=production webpack --progress --mode production",
@@ -26,7 +27,7 @@
     "lint:fix": "npm run lint -- --fix",
     "storybook": "start-storybook -p 6006",
     "storybook:build": "build-storybook -o docs",
-    "test": "jest --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=cobertura --coverageReporters=html",
+    "test": "jest --ci --reporters=default --reporters=jest-junit --coverage --coverageReporters=cobertura --coverageReporters=lcov --coverageReporters=html",
     "test:coverage": "npm run test -- --coverage",
     "test:watch": "npm run test -- --watch",
     "prepare": "cd .. && husky install"
@@ -50,6 +51,7 @@
     "@types/jest": "^24.0.23",
     "@types/qrcode.react": "^1.0.1",
     "@types/react": "^16.9.11",
+    "@types/react-pdf": "^5.7.2",
     "@typescript-eslint/eslint-plugin": "^2.8.0",
     "@typescript-eslint/parser": "^2.8.0",
     "babel-jest": "24.9.0",

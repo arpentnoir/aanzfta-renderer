@@ -1,0 +1,5 @@
+name: ha-dvp-schema-registry
+runtime: nodejs
+description: Pulumi project for GoSource HA-DVP project
+options:
+  refresh: always

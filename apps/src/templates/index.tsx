@@ -1,9 +1,8 @@
 import { TemplateRegistry } from "@govtechsg/decentralized-renderer-react-components";
-import { templates as certificateOfOriginTemplate } from "./CertificateOfOriginTemplate";
-import { templates as customTemplate } from "./customTemplate";
-import { CustomTemplateCertificate } from "./samples";
+import { v3 } from "@govtechsg/open-attestation";
 
-export const registry: TemplateRegistry<CustomTemplateCertificate> = {
-  custom: customTemplate,
-  coo: certificateOfOriginTemplate
+import { templates as certificateOfOriginTemplate } from "./CertificateOfOriginTemplate";
+
+export const registry: TemplateRegistry<v3.OpenAttestationDocument> = {
+  COO: certificateOfOriginTemplate
 };
