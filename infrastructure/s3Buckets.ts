@@ -86,46 +86,48 @@ const distributedRendererWebsiteCertificate = pulumi.output(
   )
 );
 
-const distributedRendererWebsiteCloudFrontArgs: aws.cloudfront.DistributionArgs = {
-  enabled: true,
-  aliases: [distributedRendererDomain],
-  origins: [
-    {
-      originId: distributedRendererSpaBucket.arn,
-      domainName: distributedRendererSpaBucket.bucketRegionalDomainName,
-      s3OriginConfig: {
-        originAccessIdentity: originAccessIdentity.cloudfrontAccessIdentityPath,
+const distributedRendererWebsiteCloudFrontArgs: aws.cloudfront.DistributionArgs =
+  {
+    enabled: true,
+    aliases: [distributedRendererDomain],
+    origins: [
+      {
+        originId: distributedRendererSpaBucket.arn,
+        domainName: distributedRendererSpaBucket.bucketRegionalDomainName,
+        s3OriginConfig: {
+          originAccessIdentity:
+            originAccessIdentity.cloudfrontAccessIdentityPath,
+        },
+      },
+    ],
+    customErrorResponses: [
+      { errorCode: 403, responseCode: 200, responsePagePath: "/index.html" },
+    ],
+    defaultRootObject: "index.html",
+    defaultCacheBehavior: {
+      targetOriginId: distributedRendererSpaBucket.arn,
+      viewerProtocolPolicy: "redirect-to-https",
+      allowedMethods: ["GET", "HEAD", "OPTIONS"],
+      cachedMethods: ["GET", "HEAD", "OPTIONS"],
+      forwardedValues: {
+        cookies: { forward: "none" },
+        queryString: false,
+      },
+      minTtl: 0,
+      defaultTtl: 60 * 10,
+      maxTtl: 60 * 10,
+    },
+    priceClass: "PriceClass_All",
+    restrictions: {
+      geoRestriction: {
+        restrictionType: "none",
       },
     },
-  ],
-  customErrorResponses: [
-    { errorCode: 403, responseCode: 200, responsePagePath: "/index.html" },
-  ],
-  defaultRootObject: "/index.html",
-  defaultCacheBehavior: {
-    targetOriginId: distributedRendererSpaBucket.arn,
-    viewerProtocolPolicy: "redirect-to-https",
-    allowedMethods: ["GET", "HEAD", "OPTIONS"],
-    cachedMethods: ["GET", "HEAD", "OPTIONS"],
-    forwardedValues: {
-      cookies: { forward: "none" },
-      queryString: false,
+    viewerCertificate: {
+      acmCertificateArn: distributedRendererWebsiteCertificate.arn,
+      sslSupportMethod: "sni-only",
     },
-    minTtl: 0,
-    defaultTtl: 60 * 10,
-    maxTtl: 60 * 10,
-  },
-  priceClass: "PriceClass_All",
-  restrictions: {
-    geoRestriction: {
-      restrictionType: "none",
-    },
-  },
-  viewerCertificate: {
-    acmCertificateArn: distributedRendererWebsiteCertificate.arn,
-    sslSupportMethod: "sni-only",
-  },
-};
+  };
 
 const distributedRendererWebsiteCloudFront = new aws.cloudfront.Distribution(
   `${stack}-cf-distributedRendererWebsite`,

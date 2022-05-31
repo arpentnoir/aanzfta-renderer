@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const BrotliPlugin = require("brotli-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 const webpack = require("webpack");
 const path = require("path");
 
@@ -46,7 +47,11 @@ module.exports = {
     }),
     ...(IS_PROD
       ? [new CompressionPlugin({ test: /\.(js|css|html|svg)$/ }), new BrotliPlugin({ test: /\.(js|css|html|svg)$/ })]
-      : [])
+      : []),
+
+    new CopyPlugin({
+      patterns: [{ from: "./static/contexts", to: "./contexts" }]
+    })
   ],
   optimization: {
     splitChunks: {
@@ -70,7 +75,10 @@ module.exports = {
     historyApiFallback: true,
     hot: true,
     inline: true,
-    port: 3000,
+    port: 7000,
+    headers: {
+      "Access-Control-Allow-Origin": "*"
+    },
     stats: {
       colors: true,
       progress: true
