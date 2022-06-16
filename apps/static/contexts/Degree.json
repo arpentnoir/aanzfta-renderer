@@ -7,6 +7,10 @@
     {
       "recipient": "xsd:string",
       "degree": "xsd:string",
+      "award": "xsd:string",
+      "gpa": "xsd:string",
+      "club": "xsd:string",
+      "thesis": "xsd:string",
       "links": {
         "@id": "https://schemata.openattestation.com/vocab/#links",
         "@context": {

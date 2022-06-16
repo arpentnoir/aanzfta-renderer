@@ -1,6 +1,5 @@
 import React from "react";
 import { render } from "@testing-library/react";
-import { v2 } from "@govtechsg/open-attestation";
 import { DegreeTemplate } from "./degreeTemplate";
 
 const document = {
@@ -11,16 +10,15 @@ const document = {
   issuer: {
     name: "Starfleet Academy"
   },
-  issuers: [],
-  $template: {} as v2.TemplateObject
+  issuers: []
 };
 
 describe("degreeTemplate", () => {
   it("should render correctly", async () => {
-    const { findByText } = render(<DegreeTemplate document={document} handleObfuscation={jest.fn()} />);
+    const { findByText } = render(<DegreeTemplate document={document as any} handleObfuscation={jest.fn()} />);
 
     expect(await findByText("Starfleet Academy")).toBeInstanceOf(HTMLElement);
-    expect(await findByText("Recipient: John Doe")).toBeInstanceOf(HTMLElement);
-    expect(await findByText("Degree: Bachelor of Advanced Interstellar Combat")).toBeInstanceOf(HTMLElement);
+    expect(await findByText("John Doe")).toBeInstanceOf(HTMLElement);
+    expect(await findByText("Bachelor of Advanced Interstellar Combat")).toBeInstanceOf(HTMLElement);
   });
 });
