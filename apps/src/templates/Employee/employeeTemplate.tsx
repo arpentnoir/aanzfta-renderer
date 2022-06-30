@@ -54,12 +54,12 @@ export const EmployeeTemplate: FunctionComponent<TemplateProps<EmployeeTemplateC
 
             <div className="col-span-4  md:col-span-6">
               {redactedKeys.includes("employee") ? (
-                <p className="h3 text-error capitalize">**Redacted**</p>
+                <p className="h3 capitalize">**Redacted**</p>
               ) : !!values.employee ? (
                 <RedactableValue
                   editable={editable}
                   value={values.employee}
-                  onRedactionRequested={() => handleObfuscation(`credentialSubject.employee}`)}
+                  onRedactionRequested={() => handleObfuscation(`credentialSubject.employee`)}
                   iconRedact={<IconRedact />}
                 />
               ) : (
@@ -75,17 +75,20 @@ export const EmployeeTemplate: FunctionComponent<TemplateProps<EmployeeTemplateC
             </div>
 
             <div className="col-span-4  md:col-span-6">
-              {redactedKeys.includes("trget") ? (
-                <p className="h3 text-eraror capitalize">**Redacted**</p>
+              {redactedKeys.includes("target") ? (
+                <p className="h3 capitalize">**Redacted**</p>
               ) : !!values.qualification ? (
-                <a href={values.qualification} target="_blank" rel="noopener noreferrer" data-testid="verify-link">
+                <div>
+                  <a href={values.qualification} target="_blank" rel="noopener noreferrer" data-testid="verify-link">
+                    Verify Link
+                  </a>
                   <RedactableValue
                     editable={editable}
-                    value="Verify Link"
-                    onRedactionRequested={() => handleObfuscation("relatedLink.0")}
+                    value=" "
+                    onRedactionRequested={() => handleObfuscation("relatedLink.0.target")}
                     iconRedact={<IconRedact />}
                   />
-                </a>
+                </div>
               ) : (
                 <p className="h3 capitalize">**Field value does not exist**</p>
               )}
