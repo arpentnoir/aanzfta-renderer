@@ -238,16 +238,20 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
             <DocumentSegment
               sectionTitle={"1. Goods Consigned from (Exporter’s name, address and country)"}
               sectionBody={<EntityRender exporter={exporter} />}
-              handleObfuscation={() => handleObfuscation("credentialSubject?.goodsConsignedFrom")}
+              handleObfuscation={() => {
+                handleObfuscation("credentialSubject.supplyChainConsignment.consignor");
+              }}
               minBodyHeight={0}
-              edit={editable}
+              edit={!!exporter && editable}
+              redacted={!exporter}
             />
             <DocumentSegment
               sectionTitle={"2. Goods Consigned to (Importer’s/ Consignee’s name, address, country)"}
               sectionBody={<EntityRender exporter={importer} />}
-              handleObfuscation={() => handleObfuscation("credentialSubject?.goodsConsignedTo")}
+              handleObfuscation={() => handleObfuscation("credentialSubject.supplyChainConsignment.consignee")}
               minBodyHeight={0}
-              edit={editable}
+              edit={!!importer && editable}
+              redacted={!importer}
             />
           </div>
           <div className="w-1/2" style={{ width: "50%" }}>
@@ -270,6 +274,8 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
           <div style={{ width: "50%", flex: 1 }}>
             <DocumentSegment
               sectionTitle={"3. Means of transport and route (if known)"}
+              edit={false}
+              handleObfuscation={() => null}
               sectionBody={
                 <>
                   <div>Shipment Date: {formatDate(transportMovment.departureEvent.departureDateTime)}</div>
@@ -277,13 +283,13 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
                   <div>Port of Discharge: {getValue(supplyChainConsignment.loadingBaseportLocation.iD)}</div>
                 </>
               }
-              edit={editable}
-              handleObfuscation={() => handleObfuscation("")}
             />
           </div>
           <div style={{ width: "50%", flex: 1 }}>
             <DocumentSegment
               sectionTitle={"4. For Official Use"}
+              edit={false}
+              handleObfuscation={() => null}
               sectionBody={
                 <>
                   <div>
@@ -308,8 +314,6 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
                   </div>
                 </>
               }
-              edit={editable}
-              handleObfuscation={() => handleObfuscation("")}
             />
           </div>
         </div>
@@ -357,14 +361,16 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
                   </div>
                 </>
               }
-              edit={editable}
-              handleObfuscation={() => handleObfuscation("credentialSubject.declarationByTheExporter")}
+              edit={false}
+              handleObfuscation={() => null}
             />
           </div>
           <div style={{ width: "50%", flex: 1 }}>
             <DocumentSegment
               sectionTitle={"12. Certification"}
               height={"100%"}
+              edit={false}
+              handleObfuscation={() => null}
               sectionBody={
                 <>
                   <p>
@@ -381,20 +387,9 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
                   <p>Place and date, signature and stamp of Authorised Issuing Authority/ Body</p>
                 </>
               }
-              edit={editable}
-              handleObfuscation={() => handleObfuscation("credentialSubject.certificationOnThBasisOfControlCarriedOut")}
             />
           </div>
         </div>
-        {/** missing from examples */}
-        <DocumentSegment
-          sectionTitle={""}
-          sectionBody={
-            "13.  Back-to-back Certificate of Origin Subject of third-party invoice  Issued retroactively De Minimis Accumulation "
-          }
-          edit={editable}
-          handleObfuscation={() => handleObfuscation("")}
-        />
       </div>
     </div>
   );

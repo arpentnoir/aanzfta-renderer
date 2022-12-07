@@ -10,6 +10,7 @@ interface DocumentSegmentProps {
   minBodyHeight?: string | number;
   height?: string | number;
   flex?: string | number;
+  redacted?: boolean;
 }
 
 export const DocumentSegment: FunctionComponent<DocumentSegmentProps> = ({
@@ -20,16 +21,17 @@ export const DocumentSegment: FunctionComponent<DocumentSegmentProps> = ({
   minBodyHeight = 80,
   flex,
   edit = false,
-  removable = true
+  removable = true,
+  redacted = false
 }) => {
-  const [isRedacted, setRedacted] = useState(false);
+  const [isRedacted, setRedacted] = useState(redacted);
 
   return (
     <div className="border p-2" style={{ height: height, flex: flex }}>
       <div>
         {sectionTitle}{" "}
         <RedactionButton
-          edit={edit}
+          edit={edit && !isRedacted}
           removable={removable}
           onPress={() => {
             handleObfuscation();
