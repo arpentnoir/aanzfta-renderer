@@ -21,7 +21,7 @@ export const {
   bucketName: "dvpRenderer",
   domain: config.rendererDomain,
   hostedZoneDomain: config.hostedZoneDomain,
-  pathToBucketContents: "../../artifacts/distributed-renderer-build",
+  pathToBucketContents: "../artifacts/distributed-renderer-build",
   auditLogBucket: auditLogBucket,
   originAccessIdentity: originAccessIdentity,
 });
