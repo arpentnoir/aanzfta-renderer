@@ -4,15 +4,15 @@ const config = {
   theme: {
     extend: {
       fontFamily: {
-        "second-font-family": ["Helvetica", "sans-serif"]
+        'second-font-family': ['Helvetica', 'sans-serif']
       },
       colors: {
-        primary: "#014b7e",
-        "primary-dark": "#003a63",
-        error: "#f44336"
+        primary: '#014b7e',
+        'primary-dark': '#003a63',
+        error: '#f44336'
       },
       screen: {
-        xs: "0"
+        xs: '0'
       }
     }
   }

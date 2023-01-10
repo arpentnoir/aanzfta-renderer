@@ -1,24 +1,23 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CompressionPlugin = require("compression-webpack-plugin");
-const BrotliPlugin = require("brotli-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
-const webpack = require("webpack");
-const path = require("path");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
+const BrotliPlugin = require('brotli-webpack-plugin');
+const webpack = require('webpack');
+const path = require('path');
 
-const IS_DEV = process.env.NODE_ENV === "development";
+const IS_DEV = process.env.NODE_ENV === 'development';
 const IS_PROD = !IS_DEV;
 
 module.exports = {
   entry: {
-    app: ["./src/index.tsx"]
+    app: ['./src/index.tsx']
   },
   context: path.resolve(__dirname),
-  mode: IS_DEV ? "development" : "production",
-  target: "web",
+  mode: IS_DEV ? 'development' : 'production',
+  target: 'web',
   output: {
-    path: path.resolve(__dirname, "dist"),
-    filename: "[name].[hash:7].js",
-    publicPath: "/"
+    path: path.resolve(__dirname, 'dist'),
+    filename: '[name].[hash:7].js',
+    publicPath: '/'
   },
   module: {
     rules: [
@@ -26,44 +25,46 @@ module.exports = {
         test: /\.(ts|js)x?$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
+          loader: 'babel-loader'
         }
       },
       {
         test: /\.(png|jpe?g|gif|svg)$/i,
         use: [
           {
-            loader: "file-loader"
+            loader: 'file-loader'
           }
         ]
       },
       {
         test: /\.css$/i,
-        use: [{ loader: "style-loader" }, { loader: "css-loader", options: { url: false } }]
+        use: [
+          { loader: 'style-loader' },
+          { loader: 'css-loader', options: { url: false } }
+        ]
       }
     ]
   },
   plugins: [
-    new webpack.EnvironmentPlugin(["NODE_ENV", "NET"]),
+    new webpack.EnvironmentPlugin(['NODE_ENV', 'NET']),
     new HtmlWebpackPlugin({
-      filename: "index.html",
+      filename: 'index.html',
       template: `${__dirname}/static/index.html`
     }),
     ...(IS_PROD
-      ? [new CompressionPlugin({ test: /\.(js|css|html|svg)$/ }), new BrotliPlugin({ test: /\.(js|css|html|svg)$/ })]
-      : []),
-
-    new CopyPlugin({
-      patterns: [{ from: "./static/contexts", to: "./contexts" }]
-    })
+      ? [
+          new CompressionPlugin({ test: /\.(js|css|html|svg)$/ }),
+          new BrotliPlugin({ test: /\.(js|css|html|svg)$/ })
+        ]
+      : [])
   ],
   optimization: {
     splitChunks: {
       cacheGroups: {
         vendors: {
           test: /\/node_modules\//,
-          name: "vendor",
-          chunks: "all"
+          name: 'vendor',
+          chunks: 'all'
         }
       }
     }
@@ -71,7 +72,7 @@ module.exports = {
 
   // Using cheap-eval-source-map for build times
   // switch to inline-source-map if detailed debugging needed
-  devtool: IS_PROD ? false : "cheap-eval-source-map",
+  devtool: IS_PROD ? false : 'cheap-eval-source-map',
 
   devServer: {
     compress: true,
@@ -81,7 +82,7 @@ module.exports = {
     inline: true,
     port: 7000,
     headers: {
-      "Access-Control-Allow-Origin": "*"
+      'Access-Control-Allow-Origin': '*'
     },
     stats: {
       colors: true,
@@ -90,10 +91,10 @@ module.exports = {
   },
 
   resolve: {
-    extensions: [".js", ".ts", ".tsx"],
-    modules: ["node_modules", path.resolve(__dirname, "src")],
+    extensions: ['.js', '.ts', '.tsx'],
+    modules: ['node_modules', path.resolve(__dirname, 'src')],
     alias: {
-      "react-dom": "@hot-loader/react-dom"
+      'react-dom': '@hot-loader/react-dom'
     }
   },
   bail: true

@@ -1,9 +1,9 @@
-import React, { FunctionComponent, useState } from "react";
-import { PrivacyFilter } from "../../common/components/PrivacyFilter/PrivacyFilter";
-import { DocumentSegment, DocumentSummary } from "../../common/components";
-import { TemplateProps } from "@govtechsg/decentralized-renderer-react-components";
-import { v3 } from "@govtechsg/open-attestation";
-import { formatDate, getValue } from "../../common/utils/utils";
+import React, { FunctionComponent, useState } from 'react';
+import { PrivacyFilter } from '../../common/components/PrivacyFilter/PrivacyFilter';
+import { DocumentSegment, DocumentSummary } from '../../common/components';
+import { TemplateProps } from '@govtechsg/decentralized-renderer-react-components';
+import { v3 } from '@govtechsg/open-attestation';
+import { formatDate, getValue } from '../../common/utils/utils';
 
 export interface PostalAddress {
   line1: string;
@@ -58,7 +58,8 @@ export interface TradeLineItems {
     grossWeight: string;
   }[];
 }
-export interface AANZFTACertificateOfOriginDoc extends v3.OpenAttestationDocument {
+export interface AANZFTACertificateOfOriginDoc
+  extends v3.OpenAttestationDocument {
   credentialSubject: {
     iD: string;
     issueDateTime: string;
@@ -123,7 +124,9 @@ interface ConsinmentRenderItem {
   InvoiceDate?: string;
 }
 
-export const ConsinmentsRender: FunctionComponent<{ consinments: Consignments[] }> = ({ consinments }) => {
+export const ConsinmentsRender: FunctionComponent<{
+  consinments: Consignments[];
+}> = ({ consinments }) => {
   const items: ConsinmentRenderItem[] = [];
   consinments?.forEach(consignmentItem => {
     const { tradeLineItems } = consignmentItem;
@@ -132,14 +135,17 @@ export const ConsinmentsRender: FunctionComponent<{ consinments: Consignments[] 
       const flData = {
         ItemNumber: tradeLineItem.sequenceNumber,
         Kinds: tradeProduct?.description,
-        Origin: consignmentItem.crossBorderRegulatoryProcedure.originCriteriaText
+        Origin:
+          consignmentItem.crossBorderRegulatoryProcedure.originCriteriaText
       };
 
       transportPackages?.forEach((transportPackage, index) => {
         items.push({
           Marks: getValue(transportPackage.iD),
           Quantity: `${transportPackage.grossVolume}, ${transportPackage.grossWeight}`,
-          InvoiceDate: formatDate(tradeLineItem.invoiceReference?.issueDateTime),
+          InvoiceDate: formatDate(
+            tradeLineItem.invoiceReference?.issueDateTime
+          ),
           InvoiceNum: getValue(tradeLineItem.invoiceReference?.iD),
           ...(index === 0 ? flData : {})
         });
@@ -148,7 +154,7 @@ export const ConsinmentsRender: FunctionComponent<{ consinments: Consignments[] 
   });
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
         <div style={{ flex: 0.1 }} className={`p-2 border `}>
           5. Item number
         </div>
@@ -156,40 +162,82 @@ export const ConsinmentsRender: FunctionComponent<{ consinments: Consignments[] 
           6. Marks and numbers on packages
         </div>
         <div style={{ flex: 0.35 }} className={`p-2 border`}>
-          7. Number and kind of packages; description of goods including HS Code (6 digits) and brand name (if
-          applicable). Name of company issuing third party invoice (if applicable)
+          7. Number and kind of packages; description of goods including HS Code
+          (6 digits) and brand name (if applicable). Name of company issuing
+          third party invoice (if applicable)
         </div>
         <div style={{ flex: 0.15 }} className={`p-2 border`}>
           8. Origin Conferring Criterion (see Overleaf Notes)
         </div>
         <div style={{ flex: 0.3 }} className={`p-2 border`}>
-          9. Quantity (Gross weight or other measurement), and value (FOB) where RVC is applied (see Overleaf Notes)
+          9. Quantity (Gross weight or other measurement), and value (FOB) where
+          RVC is applied (see Overleaf Notes)
         </div>
         <div style={{ flex: 0.15 }} className={`p-2 border`}>
           10. Invoice number(s) and date of invoice(s)
         </div>
       </div>
       {items.map((line, index) => (
-        <div key={index} style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ flex: 0.1, borderLeftWidth: "1px", borderRightWidth: "1px" }} className="p-2 border-l">
+        <div key={index} style={{ display: 'flex', flexDirection: 'row' }}>
+          <div
+            style={{
+              flex: 0.1,
+              borderLeftWidth: '1px',
+              borderRightWidth: '1px'
+            }}
+            className="p-2 border-l"
+          >
             {line.ItemNumber}
           </div>
           <div
-            style={{ flex: 0.15, wordBreak: "break-all", borderLeftWidth: "1px", borderRightWidth: "1px" }}
+            style={{
+              flex: 0.15,
+              wordBreak: 'break-all',
+              borderLeftWidth: '1px',
+              borderRightWidth: '1px'
+            }}
             className="p-2"
           >
             {line.Marks}
           </div>
-          <div style={{ flex: 0.35, borderLeftWidth: "1px", borderRightWidth: "1px" }} className="p-2">
+          <div
+            style={{
+              flex: 0.35,
+              borderLeftWidth: '1px',
+              borderRightWidth: '1px'
+            }}
+            className="p-2"
+          >
             {line.Kinds}
           </div>
-          <div style={{ flex: 0.15, borderLeftWidth: "1px", borderRightWidth: "1px" }} className="p-2">
+          <div
+            style={{
+              flex: 0.15,
+              borderLeftWidth: '1px',
+              borderRightWidth: '1px'
+            }}
+            className="p-2"
+          >
             {line.Origin}
           </div>
-          <div style={{ flex: 0.3, borderLeftWidth: "1px", borderRightWidth: "1px" }} className="p-2">
+          <div
+            style={{
+              flex: 0.3,
+              borderLeftWidth: '1px',
+              borderRightWidth: '1px'
+            }}
+            className="p-2"
+          >
             {line.Quantity}
           </div>
-          <div style={{ flex: 0.15, borderLeftWidth: "1px", borderRightWidth: "1px" }} className="p-2">
+          <div
+            style={{
+              flex: 0.15,
+              borderLeftWidth: '1px',
+              borderRightWidth: '1px'
+            }}
+            className="p-2"
+          >
             <div>{line.InvoiceNum}</div>
             <div>{line.InvoiceDate}</div>
           </div>
@@ -199,7 +247,9 @@ export const ConsinmentsRender: FunctionComponent<{ consinments: Consignments[] 
   );
 };
 
-export const EntityRender: FunctionComponent<{ exporter?: Entity }> = ({ exporter }) => {
+export const EntityRender: FunctionComponent<{ exporter?: Entity }> = ({
+  exporter
+}) => {
   return (
     <>
       <p>{exporter?.name}</p>
@@ -207,7 +257,8 @@ export const EntityRender: FunctionComponent<{ exporter?: Entity }> = ({ exporte
       <p>{exporter?.postalAddress?.line2}</p>
       <p>{exporter?.postalAddress?.cityName}</p>
       <p>
-        {exporter?.postalAddress?.countrySubDivisionName} {exporter?.postalAddress?.postcode}{" "}
+        {exporter?.postalAddress?.countrySubDivisionName}{' '}
+        {exporter?.postalAddress?.postcode}{' '}
         {exporter?.postalAddress?.countryCode}
       </p>
       {exporter?.iD && <p>ABN {getValue(exporter?.iD)}</p>}
@@ -215,12 +266,15 @@ export const EntityRender: FunctionComponent<{ exporter?: Entity }> = ({ exporte
   );
 };
 
-export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTACertificateOfOriginDoc> & {
+export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<
+  AANZFTACertificateOfOriginDoc
+> & {
   className?: string;
 }> = ({ document, handleObfuscation }) => {
   const [editable, setEditable] = useState(false);
 
-  const supplyChainConsignment = document?.credentialSubject?.supplyChainConsignment;
+  const supplyChainConsignment =
+    document?.credentialSubject?.supplyChainConsignment;
   const exporter = supplyChainConsignment.consignor;
   const importer = supplyChainConsignment.consignee;
   const transportMovment = supplyChainConsignment.mainCarriageTransportMovement;
@@ -228,66 +282,101 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
 
   return (
     <div className="AANZFTAContainer">
-      <PrivacyFilter editable={editable} onToggleEditable={() => setEditable(!editable)} />
+      <PrivacyFilter
+        editable={editable}
+        onToggleEditable={() => setEditable(!editable)}
+      />
       <div className="text-center mt-4">
-        <h1 style={{ fontSize: "0.9em", fontWeight: "bolder" }}>CERTIFICATE OF ORIGIN</h1>
+        <h1 style={{ fontSize: '0.9em', fontWeight: 'bolder' }}>
+          CERTIFICATE OF ORIGIN
+        </h1>
       </div>
-      <div className="border m-2" style={{ width: "210mm" }}>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ width: "50%", flex: 1 }}>
+      <div className="border m-2" style={{ width: '210mm' }}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ width: '50%', flex: 1 }}>
             <DocumentSegment
-              sectionTitle={"1. Goods Consigned from (Exporter’s name, address and country)"}
+              sectionTitle={
+                '1. Goods Consigned from (Exporter’s name, address and country)'
+              }
               sectionBody={<EntityRender exporter={exporter} />}
               handleObfuscation={() => {
-                handleObfuscation("credentialSubject.supplyChainConsignment.consignor");
+                handleObfuscation(
+                  'credentialSubject.supplyChainConsignment.consignor'
+                );
               }}
               minBodyHeight={0}
               edit={!!exporter && editable}
               redacted={!exporter}
             />
             <DocumentSegment
-              sectionTitle={"2. Goods Consigned to (Importer’s/ Consignee’s name, address, country)"}
+              sectionTitle={
+                '2. Goods Consigned to (Importer’s/ Consignee’s name, address, country)'
+              }
               sectionBody={<EntityRender exporter={importer} />}
-              handleObfuscation={() => handleObfuscation("credentialSubject.supplyChainConsignment.consignee")}
+              handleObfuscation={() =>
+                handleObfuscation(
+                  'credentialSubject.supplyChainConsignment.consignee'
+                )
+              }
               minBodyHeight={0}
               edit={!!importer && editable}
               redacted={!importer}
             />
           </div>
-          <div className="w-1/2" style={{ width: "50%" }}>
+          <div className="w-1/2" style={{ width: '50%' }}>
             <DocumentSummary
               certificateNo={getValue(document.credentialSubject.iD)}
               title={
                 <>
-                  <h2 style={{ fontWeight: "bold" }}>
-                    AGREEMENT ESTABLISHING THE ASEAN – AUSTRALIA–NEW ZEALAND FREE TRADE AREA (AANZFTA)
+                  <h2 style={{ fontWeight: 'bold' }}>
+                    AGREEMENT ESTABLISHING THE ASEAN – AUSTRALIA–NEW ZEALAND
+                    FREE TRADE AREA (AANZFTA)
                   </h2>
-                  <h2 style={{ fontWeight: "bold", marginTop: 10 }}>CERTIFICATE OF ORIGIN</h2>
+                  <h2 style={{ fontWeight: 'bold', marginTop: 10 }}>
+                    CERTIFICATE OF ORIGIN
+                  </h2>
                   <div>(Combined Declaration and Certificate)</div>
                 </>
               }
-              issuedIn={supplyChainConsignment.exportCountry.name ? supplyChainConsignment.exportCountry.name : ""}
+              issuedIn={
+                supplyChainConsignment.exportCountry.name
+                  ? supplyChainConsignment.exportCountry.name
+                  : ''
+              }
             />
           </div>
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ width: "50%", flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ width: '50%', flex: 1 }}>
             <DocumentSegment
-              sectionTitle={"3. Means of transport and route (if known)"}
+              sectionTitle={'3. Means of transport and route (if known)'}
               edit={false}
               handleObfuscation={() => null}
               sectionBody={
                 <>
-                  <div>Shipment Date: {formatDate(transportMovment.departureEvent.departureDateTime)}</div>
-                  <div>Vessel’s name/Aircraft etc.: {getValue(transportMovment.usedTransportMeans.iD)}</div>
-                  <div>Port of Discharge: {getValue(supplyChainConsignment.loadingBaseportLocation.iD)}</div>
+                  <div>
+                    Shipment Date:{' '}
+                    {formatDate(
+                      transportMovment.departureEvent.departureDateTime
+                    )}
+                  </div>
+                  <div>
+                    Vessel’s name/Aircraft etc.:{' '}
+                    {getValue(transportMovment.usedTransportMeans.iD)}
+                  </div>
+                  <div>
+                    Port of Discharge:{' '}
+                    {getValue(
+                      supplyChainConsignment.loadingBaseportLocation.iD
+                    )}
+                  </div>
                 </>
               }
             />
           </div>
-          <div style={{ width: "50%", flex: 1 }}>
+          <div style={{ width: '50%', flex: 1 }}>
             <DocumentSegment
-              sectionTitle={"4. For Official Use"}
+              sectionTitle={'4. For Official Use'}
               edit={false}
               handleObfuscation={() => null}
               sectionBody={
@@ -299,8 +388,10 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
                       id="c1"
                       checked={document?.credentialSubject?.isPreferential}
                       disabled
-                    />{" "}
-                    <label htmlFor="c1">Preferential Treatment Given Under AANZFTA</label>
+                    />{' '}
+                    <label htmlFor="c1">
+                      Preferential Treatment Given Under AANZFTA
+                    </label>
                   </div>
                   <div>
                     <input
@@ -309,8 +400,10 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
                       id="c2"
                       checked={!document?.credentialSubject?.isPreferential}
                       disabled
-                    />{" "}
-                    <label htmlFor="c2">Preferential Treatment Not Given (Please state reason/s)</label>
+                    />{' '}
+                    <label htmlFor="c2">
+                      Preferential Treatment Not Given (Please state reason/s)
+                    </label>
                   </div>
                 </>
               }
@@ -320,23 +413,25 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
         <div>
           <ConsinmentsRender consinments={consinments} />
         </div>
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <div style={{ width: "50%", flex: 1 }}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ width: '50%', flex: 1 }}>
             <DocumentSegment
-              sectionTitle={"11. Declaration by the exporter"}
+              sectionTitle={'11. Declaration by the exporter'}
               sectionBody={
                 <>
                   <p>
-                    The undersigned hereby declares that the above details and statements are correct; that all the
-                    goods were produced in
+                    The undersigned hereby declares that the above details and
+                    statements are correct; that all the goods were produced in
                   </p>
                   <div className="my-8 text-center">
                     <br />
                     <p>{supplyChainConsignment?.exportCountry?.name}</p>
                     <p>( country )</p>
                     <p>
-                      and that they comply with the rules of origin, as provided in Chapter 3 of the Agreement
-                      Establishing the ASEAN- Australia-New Zealand Free Trade Area for the goods exported to
+                      and that they comply with the rules of origin, as provided
+                      in Chapter 3 of the Agreement Establishing the ASEAN-
+                      Australia-New Zealand Free Trade Area for the goods
+                      exported to
                     </p>
                     <br />
                     <p>{supplyChainConsignment?.importCountry?.name}</p>
@@ -344,20 +439,31 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
                     <div className="my-4">
                       <p>
                         {supplyChainConsignment?.loadingBaseportLocation?.name}
-                        {supplyChainConsignment?.loadingBaseportLocation?.name &&
-                          document?.credentialSubject.firstSignatoryAuthentication?.actualDateTime &&
+                        {supplyChainConsignment?.loadingBaseportLocation
+                          ?.name &&
+                          document?.credentialSubject
+                            .firstSignatoryAuthentication?.actualDateTime &&
                           `, `}
-                        {formatDate(document?.credentialSubject.firstSignatoryAuthentication?.actualDateTime)}
+                        {formatDate(
+                          document?.credentialSubject
+                            .firstSignatoryAuthentication?.actualDateTime
+                        )}
                       </p>
-                      <div style={{ minHeight: "80px" }}>
+                      <div style={{ minHeight: '80px' }}>
                         <img
                           className="w-1/2 mx-auto"
                           data-testid="signature"
-                          src={document?.credentialSubject.firstSignatoryAuthentication?.signature}
+                          src={
+                            document?.credentialSubject
+                              .firstSignatoryAuthentication?.signature
+                          }
                         />
                       </div>
                     </div>
-                    <p>Place and date, name, signature and company of authorised signatory</p>
+                    <p>
+                      Place and date, name, signature and company of authorised
+                      signatory
+                    </p>
                   </div>
                 </>
               }
@@ -365,26 +471,34 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<AANZFTA
               handleObfuscation={() => null}
             />
           </div>
-          <div style={{ width: "50%", flex: 1 }}>
+          <div style={{ width: '50%', flex: 1 }}>
             <DocumentSegment
-              sectionTitle={"12. Certification"}
-              height={"100%"}
+              sectionTitle={'12. Certification'}
+              height={'100%'}
               edit={false}
               handleObfuscation={() => null}
               sectionBody={
                 <>
                   <p>
-                    On the basis of control carried out, it is hereby certified that the information herein is correct
-                    and that the goods described comply with the origin requirements specified in the Agreement
-                    Establishing the ASEAN-Australia-New Zealand Free Trade Area.
+                    On the basis of control carried out, it is hereby certified
+                    that the information herein is correct and that the goods
+                    described comply with the origin requirements specified in
+                    the Agreement Establishing the ASEAN-Australia-New Zealand
+                    Free Trade Area.
                   </p>
                   <div className="flex-grow">
                     <img
                       className="w-1/2 mx-auto"
-                      src={document.credentialSubject.secondSignatoryAuthentication.signature}
+                      src={
+                        document.credentialSubject.secondSignatoryAuthentication
+                          .signature
+                      }
                     />
                   </div>
-                  <p>Place and date, signature and stamp of Authorised Issuing Authority/ Body</p>
+                  <p>
+                    Place and date, signature and stamp of Authorised Issuing
+                    Authority/ Body
+                  </p>
                 </>
               }
             />

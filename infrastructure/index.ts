@@ -1,6 +1,5 @@
-import * as s3Buckets from "./s3Buckets";
+import * as rendererWebsite from "./renderer";
 
-export = async () => {
-  // Reference all other modules here
-  return { s3Buckets: s3Buckets };
-};
+export default () => ({
+  rendererWebsite,
+});

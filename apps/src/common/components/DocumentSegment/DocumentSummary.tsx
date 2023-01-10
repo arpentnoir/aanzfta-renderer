@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent } from 'react';
 
 interface DocumentSummaryProps {
   certificateNo: string;
@@ -6,16 +6,23 @@ interface DocumentSummaryProps {
   issuedIn: string;
 }
 
-export const DocumentSummary: FunctionComponent<DocumentSummaryProps> = ({ certificateNo, title, issuedIn }) => {
+export const DocumentSummary: FunctionComponent<DocumentSummaryProps> = ({
+  certificateNo,
+  title,
+  issuedIn
+}) => {
   return (
-    <div className="border text-center" style={{ flexDirection: "column", display: "flex", height: "100%" }}>
+    <div
+      className="border text-center"
+      style={{ flexDirection: 'column', display: 'flex', height: '100%' }}
+    >
       <div
         style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingLeft: "0.25em",
-          paddingRight: "0.25em"
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingLeft: '0.25em',
+          paddingRight: '0.25em'
         }}
       >
         <div>Certificate No.: {certificateNo}</div>
@@ -23,7 +30,13 @@ export const DocumentSummary: FunctionComponent<DocumentSummaryProps> = ({ certi
       </div>
       <div
         className="p-2"
-        style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignContent: "center", flex: 1 }}
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignContent: 'center',
+          flex: 1
+        }}
       >
         {title}
       </div>

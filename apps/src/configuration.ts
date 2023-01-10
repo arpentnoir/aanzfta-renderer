@@ -1,1 +1,1 @@
-export const APP_NAME = "Digital Verification Platform";
+export const APP_NAME = 'Digital Verification Platform';

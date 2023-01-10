@@ -1,11 +1,39 @@
 trigger:
-  batch: true
-  paths: # File paths to include or exclude for triggering a run.
-    exclude:
-      - "docs/*"
+  - main
+  - develop
+pr:
+  - main
+  - develop
+
+parameters:
+  - name: ENV
+    displayName: Deployment environment
+    default: default
+    values:
+      - default
+      - dev
+      - test
+      - preprod
 
 variables:
+  CI: "true"
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
+  isDevelop: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
+  isPR: $[eq(variables['Build.Reason'], 'PullRequest')]
+  ${{ if eq(variables.isMain, 'true') }}:
+    TARGET_ENV: test # deploy master to test environment
+  ${{ elseif eq(variables.isDevelop, 'true') }}:
+    TARGET_ENV: dev # deploy develop to dev environment
+  ${{ elseif ne(parameters.ENV, 'default')}}:
+    TARGET_ENV: ${{ parameters.ENV }} # ENV parameter overrides TARGET_ENV if set
+  ${{ else }}:
+    TARGET_ENV: dev # set default TARGET_ENV to dev
+  ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+    TARGET_BRANCH: $[replace(variables['System.PullRequest.TargetBranch'],'refs/heads/','origin/')]
+    BASE_SHA: main
+  ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+    BASE_SHA: main~1
+  HEAD_SHA: $(git rev-parse HEAD)
 
 stages:
   - stage: build_test
@@ -16,6 +44,10 @@ stages:
     jobs:
       - job: build_test
         steps:
+          - checkout: self
+            fetchDepth: 2
+            displayName: Checkout
+
           - task: NodeTool@0
             displayName: Set Node Version
             inputs:
@@ -33,27 +65,6 @@ stages:
               make unit-test
             displayName: Run unit tests
 
-          - task: SonarQubePrepare@5
-            inputs:
-              SonarQube: "sonarqube-sandbox"
-              scannerMode: "CLI"
-              configMode: "manual"
-              cliProjectKey: $(Build.Repository.Name)
-              cliProjectName: $(Build.Repository.Name)
-          - task: SonarQubeAnalyze@5
-          - task: SonarQubePublish@5
-
-          - bash: |
-              make build
-            condition: and(succeeded(), eq(variables.isMain, 'true'))
-            displayName: Build dist bundle
-
-          - task: PublishPipelineArtifact@1
-            condition: and(succeeded(), eq(variables.isMain, 'true'))
-            inputs:
-              targetPath: $(System.DefaultWorkingDirectory)/apps/dist
-              artifactName: "distributed-renderer-build"
-
           - task: PublishTestResults@2
             inputs:
               testResultsFormat: "JUnit"
@@ -61,22 +72,42 @@ stages:
               failTaskOnFailedTests: true
             displayName: Publish test results to AzDo
 
-          - publish: $(System.DefaultWorkingDirectory)/apps/coverage/cobertura-coverage.xml
-            artifact: coverage
+          - task: reportgenerator@5
+            inputs:
+              reports: "**/cobertura-coverage.xml"
+              reporttypes: "HtmlInline_AzurePipelines;Cobertura"
+              targetdir: "$(System.DefaultWorkingDirectory)/Coverage"
+            displayName: "Generate code coverage results"
 
           - task: PublishCodeCoverageResults@1
             inputs:
-              codeCoverageTool: "Cobertura" # Available options: 'JaCoCo', 'Cobertura'
-              summaryFileLocation: $(System.DefaultWorkingDirectory)/CoverageResults/apps/coverage/cobertura-coverage.xml
+              codeCoverageTool: "Cobertura"
+              summaryFileLocation: "$(System.DefaultWorkingDirectory)/Coverage/Cobertura.xml"
+              reportDirectory: "$(System.DefaultWorkingDirectory)/Coverage"
+              failTaskOnFailedTests: true
+            displayName: Publish code coverage results to AzDo
+
+          - bash: |
+              make build
+            displayName: Build build
+
+          - task: PublishPipelineArtifact@1
+            condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
+            inputs:
+              targetPath: $(System.DefaultWorkingDirectory)/apps/dist
+              artifactName: "distributed-renderer-build"
 
   - stage: deploy
     dependsOn: build_test
-    condition: and(succeeded(), eq(variables.isMain, 'true'))
+    condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
     pool:
       vmImage: ubuntu-latest
     jobs:
       - job: deploy
         steps:
+          - script: |
+              echo "Deployment environment: ${{variables.TARGET_ENV}}"
+
           - task: AzureKeyVault@2
             inputs:
               connectedServiceName: "gs-ha-dvp-serviceconnection"

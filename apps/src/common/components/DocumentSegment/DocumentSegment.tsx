@@ -1,5 +1,5 @@
-import React, { FunctionComponent, useState } from "react";
-import { RedactionButton } from "..";
+import React, { FunctionComponent, useState } from 'react';
+import { RedactionButton } from '..';
 
 interface DocumentSegmentProps {
   edit: boolean;
@@ -29,7 +29,7 @@ export const DocumentSegment: FunctionComponent<DocumentSegmentProps> = ({
   return (
     <div className="border p-2" style={{ height: height, flex: flex }}>
       <div>
-        {sectionTitle}{" "}
+        {sectionTitle}{' '}
         <RedactionButton
           edit={edit && !isRedacted}
           removable={removable}
@@ -39,7 +39,9 @@ export const DocumentSegment: FunctionComponent<DocumentSegmentProps> = ({
           }}
         />
       </div>
-      <div style={{ minHeight: minBodyHeight }}>{isRedacted ? "**Redacted**" : sectionBody}</div>
+      <div style={{ minHeight: minBodyHeight }}>
+        {isRedacted ? '**Redacted**' : sectionBody}
+      </div>
     </div>
   );
 };

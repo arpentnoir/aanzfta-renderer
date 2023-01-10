@@ -1,4 +1,4 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent } from 'react';
 
 interface RedactionButtonProps {
   edit: boolean;
@@ -6,12 +6,16 @@ interface RedactionButtonProps {
   onPress: () => void;
 }
 
-export const RedactionButton: FunctionComponent<RedactionButtonProps> = ({ onPress, edit, removable }) => {
+export const RedactionButton: FunctionComponent<RedactionButtonProps> = ({
+  onPress,
+  edit,
+  removable
+}) => {
   return (
     <>
       {edit && removable && (
         <span
-          style={{ color: "red", cursor: "pointer" }}
+          style={{ color: 'red', cursor: 'pointer' }}
           onClick={() => {
             onPress();
           }}

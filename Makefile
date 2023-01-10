@@ -9,6 +9,9 @@ AWS_ACCOUNT_ID ?= 580315648792
 AWS_ROLENAME ?= codeontap-automation
 PULUMI_STATE_URL ?= s3://${AWS_ACCOUNT_ID}-pulumi-state
 PULUMI_CONFIG_PASSPHRASE ?= 
+TARGET_DOMAIN ?= dvp.ha.showthething.com
+DVP_RENDERER_DOMAIN ?= renderer.${ENV}.${TARGET_DOMAIN}
+
 
 .EXPORT_ALL_VARIABLES: ; # send all vars to shell
 

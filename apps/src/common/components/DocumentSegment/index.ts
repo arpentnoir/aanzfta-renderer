@@ -1,2 +1,2 @@
-export * from "./DocumentSegment";
-export * from "./DocumentSummary";
+export * from './DocumentSegment';
+export * from './DocumentSummary';
