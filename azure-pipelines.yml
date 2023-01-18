@@ -16,7 +16,7 @@ parameters:
       - preprod
 
 variables:
-  CI: "true"
+  CI: 'true'
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   isDevelop: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
   isPR: $[eq(variables['Build.Reason'], 'PullRequest')]
@@ -67,23 +67,23 @@ stages:
 
           - task: PublishTestResults@2
             inputs:
-              testResultsFormat: "JUnit"
-              testResultsFiles: "**/junit.xml"
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/junit.xml'
               failTaskOnFailedTests: true
             displayName: Publish test results to AzDo
 
           - task: reportgenerator@5
             inputs:
-              reports: "**/cobertura-coverage.xml"
-              reporttypes: "HtmlInline_AzurePipelines;Cobertura"
-              targetdir: "$(System.DefaultWorkingDirectory)/Coverage"
-            displayName: "Generate code coverage results"
+              reports: '**/cobertura-coverage.xml'
+              reporttypes: 'HtmlInline_AzurePipelines;Cobertura'
+              targetdir: '$(System.DefaultWorkingDirectory)/Coverage'
+            displayName: 'Generate code coverage results'
 
           - task: PublishCodeCoverageResults@1
             inputs:
-              codeCoverageTool: "Cobertura"
-              summaryFileLocation: "$(System.DefaultWorkingDirectory)/Coverage/Cobertura.xml"
-              reportDirectory: "$(System.DefaultWorkingDirectory)/Coverage"
+              codeCoverageTool: 'Cobertura'
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/Coverage/Cobertura.xml'
+              reportDirectory: '$(System.DefaultWorkingDirectory)/Coverage'
               failTaskOnFailedTests: true
             displayName: Publish code coverage results to AzDo
 
@@ -94,9 +94,18 @@ stages:
           - task: PublishPipelineArtifact@1
             condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
             inputs:
-              targetPath: $(System.DefaultWorkingDirectory)/apps/dist
-              artifactName: "distributed-renderer-build"
-
+              targetPath: $(System.DefaultWorkingDirectory)/renderer/dist
+              artifactName: 'distributed-renderer-build'
+          - task: PublishPipelineArtifact@1
+            condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
+            inputs:
+              targetPath: $(System.DefaultWorkingDirectory)/contexts
+              artifactName: 'contexts'
+          - task: PublishPipelineArtifact@1
+            condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
+            inputs:
+              targetPath: $(System.DefaultWorkingDirectory)/schemas
+              artifactName: 'schemas'
   - stage: deploy
     dependsOn: build_test
     condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
@@ -110,14 +119,14 @@ stages:
 
           - task: AzureKeyVault@2
             inputs:
-              connectedServiceName: "gs-ha-dvp-serviceconnection"
-              keyVaultName: "gs-ha-dvp"
-              secretsFilter: "*"
+              connectedServiceName: 'gs-ha-dvp-serviceconnection'
+              keyVaultName: 'gs-ha-dvp'
+              secretsFilter: '*'
               runAsPreJob: true
 
           - task: DownloadPipelineArtifact@2
             inputs:
-              source: "current" # Options: current, specific
+              source: 'current' # Options: current, specific
               path: $(System.DefaultWorkingDirectory)/artifacts
 
           - task: NodeTool@0

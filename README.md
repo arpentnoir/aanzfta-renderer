@@ -4,7 +4,7 @@ Defines schemas and renderers for HA-DVP
 
 ## Available Scripts
 
-In the apps, you can run:
+In the renderer, you can run:
 
 ### `npm install`
 

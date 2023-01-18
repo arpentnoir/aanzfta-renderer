@@ -16,19 +16,26 @@ DVP_RENDERER_DOMAIN ?= renderer.${ENV}.${TARGET_DOMAIN}
 .EXPORT_ALL_VARIABLES: ; # send all vars to shell
 
 install:
-	cd apps && npm install
+	cd renderer && yarn install
 
 lint:
-	cd apps && npm run lint
+	cd renderer && yarn lint
 
 unit-test:
-	cd apps && npm run test
+	cd renderer && yarn test
 
 build:
-	cd apps && npm run build
+	cd renderer && yarn build
+
+# helper command to create a `artifacts` dir locally (mirroring what happens in CI pipeline)
+create-artifacts-locally:
+	mkdir -p ./artifacts
+	cp -r ./renderer/dist/. ./artifacts/distributed-renderer-build/
+	cp -r ./contexts/. ./artifacts/contexts/
+	cp -r ./schemas/. ./artifacts/schemas/
+
 
 ### Deployment
-
 pulumi-preview:
 	. scripts/run-pulumi.sh preview
 

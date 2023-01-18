@@ -1,0 +1,41 @@
+{
+  "type": "object",
+  "properties": {
+    "iD": { "type": "string" },
+    "freeTradeAgreement": { "type": "string", "enum": ["AANZFTA"] },
+    "importingJurisdiction": {
+      "type": "string",
+      "enum": [
+        "Australia",
+        "Brunei Darussalam",
+        "Cambodia",
+        "Indonesia",
+        "Lao PDR",
+        "Malaysia",
+        "Myanmar",
+        "New Zealand",
+        "Philippines",
+        "Singapore",
+        "Thailand",
+        "Vietnam"
+      ]
+    },
+    "exporterOrManufacturerAbn": { "type": "string" },
+    "importerName": { "type": "string" },
+    "consignmentReferenceNumber": { "type": "string" },
+    "originalDocument": { "type": "string" },
+    "documentDeclaration": {
+      "type": "boolean",
+      "title": "I certify that the information herein is correct and that the described goods comply with the origin requirements of the specified Free Trade Agreement."
+    }
+  },
+  "required": [
+    "iD",
+    "freeTradeAgreement",
+    "importingJurisdiction",
+    "exporterOrManufacturerAbn",
+    "consignmentReferenceNumber",
+    "originalDocument",
+    "documentDeclaration"
+  ]
+}
