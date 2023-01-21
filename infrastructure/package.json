@@ -1,17 +1,17 @@
 {
-    "name": "ha-dvp",
-    "devDependencies": {
-        "@types/mime": "^2.0.3",
-        "@types/node": "^14"
-    },
-    "dependencies": {
-        "@pulumi/aws": "^5.0.0",
-        "@pulumi/awsx": "^0.40.0",
-        "@pulumi/pulumi": "^3.0.0",
-        "@pulumi/synced-folder": "^0.0.9",
-        "fs": "0.0.1-security",
-        "gs-pulumi-library": "^0.2.3",
-        "mime-types": "^2.1.35",
-        "path": "^0.12.7"
-    }
+  "name": "ha-dvp",
+  "devDependencies": {
+    "@types/mime": "^2.0.3",
+    "@types/node": "^14"
+  },
+  "dependencies": {
+    "@pulumi/aws": "5.27.0",
+    "@pulumi/awsx": "1.0.1",
+    "@pulumi/pulumi": "3.52.1",
+    "@pulumi/synced-folder": "0.0.9",
+    "fs": "0.0.1-security",
+    "gs-pulumi-library": "^0.2.3",
+    "mime-types": "^2.1.35",
+    "path": "^0.12.7"
+  }
 }
