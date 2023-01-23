@@ -26,6 +26,7 @@ export const syncedS3BucketFolder = new synced.S3BucketFolder(
 export const schemasBucketNotificationQueue = new aws.sqs.Queue(
   `dvp-${process.env.ENV}-credential-schemas-event-queue`,
   {
+    name: `dvp-${process.env.ENV}-credential-schemas-event-queue`,
     policy: pulumi.interpolate`{
       "Version": "2012-10-17",
       "Statement": [
