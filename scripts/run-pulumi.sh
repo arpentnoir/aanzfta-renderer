@@ -1,13 +1,20 @@
 #!/bin/bash
 
-# Set AWS credentials as environment variables
-OUT=$(aws sts assume-role --role-arn arn:aws:iam::${AWS_ACCOUNT_ID}:role/${AWS_ROLENAME} --role-session-name cicd_automation_session);\
-export AWS_ACCESS_KEY_ID=$(echo ${OUT} | jq -r '.Credentials''.AccessKeyId')
-export AWS_SECRET_ACCESS_KEY=$(echo ${OUT} | jq -r '.Credentials''.SecretAccessKey')
-export AWS_SESSION_TOKEN=$(echo ${OUT} | jq -r '.Credentials''.SessionToken')
+echo "The present working directory is $( pwd; )";
+
+echo "aws s3api head-bucket --bucket ${PULUMI_STATE}";
+
+# Create the pulumi state bucket if required
+BUCKET_EXISTS=$(aws s3api head-bucket --bucket ${PULUMI_STATE} 2>&1 || true)
+if [ ! -z "$BUCKET_EXISTS" ]; then
+    aws s3api create-bucket --bucket ${PULUMI_STATE} --region ${AWS_REGION} --create-bucket-configuration LocationConstraint=${AWS_REGION}
+    aws s3api wait bucket-exists --bucket ${PULUMI_STATE} --region ${AWS_REGION}
+fi
 
 # Login to self-hosted backend
-pulumi login ${PULUMI_STATE_URL} -C infrastructure/;
+pulumi login ${PULUMI_STATE_URL} -C ./;
+
+pulumi stack select ${APP_NAME}-${ENV} --create -C ./;
 
 # Run pulumi command
 if [ $1 = "preview" ]; then

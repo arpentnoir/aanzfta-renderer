@@ -1,17 +1,18 @@
 SHELL := /bin/bash
 
 # Default env variables
+
 APP_NAME = ha-dvp-schema-registry
-ENV ?= dev
+ENV ?= e1
 
 AWS_REGION ?= ap-southeast-2
-AWS_ACCOUNT_ID ?= 580315648792
-AWS_ROLENAME ?= codeontap-automation
-PULUMI_STATE_URL ?= s3://${AWS_ACCOUNT_ID}-pulumi-state
+AWS_ACCOUNT_ID ?= 636729270584
+PULUMI_STATE ?= ${AWS_ACCOUNT_ID}-${APP_NAME}-${ENV}-pulumi-state
+PULUMI_STATE_URL ?= s3://${AWS_ACCOUNT_ID}-${APP_NAME}-${ENV}-pulumi-state
 PULUMI_CONFIG_PASSPHRASE ?= 
-TARGET_DOMAIN ?= dvp.ha.showthething.com
+TARGET_DOMAIN ?= nonprod-dvp.cp4.homeaffairs.gov.au
 DVP_RENDERER_DOMAIN ?= renderer.${ENV}.${TARGET_DOMAIN}
-
+DVP_CONTEXT_DOMAIN ?= context.${ENV}.${TARGET_DOMAIN}
 
 .EXPORT_ALL_VARIABLES: ; # send all vars to shell
 

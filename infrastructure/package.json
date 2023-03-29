@@ -10,7 +10,7 @@
     "@pulumi/pulumi": "3.52.1",
     "@pulumi/synced-folder": "0.0.9",
     "fs": "0.0.1-security",
-    "gs-pulumi-library": "^0.2.3",
+    "gs-pulumi-library": "^0.2.4",
     "mime-types": "^2.1.35",
     "path": "^0.12.7"
   }

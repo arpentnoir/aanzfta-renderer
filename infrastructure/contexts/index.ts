@@ -1,18 +1,27 @@
-import * as aws from '@pulumi/aws';
-import * as pulumi from '@pulumi/pulumi';
-import * as synced from '@pulumi/synced-folder';
+import * as pulumi from "@pulumi/pulumi";
+import { auditLogBucket } from "../common/auditLogBucket";
+import { originAccessIdentity } from "../common/originAccessIdentity";
+import { createS3HostedWebsite } from "./s3Website";
 
-const dvpStack = pulumi.getStack();
+const config = {
+  hostedZoneDomain: process.env.TARGET_DOMAIN,
+  contextDomain: process.env.DVP_CONTEXT_DOMAIN,
+};
 
-export const contextsBucket = new aws.s3.Bucket(
-  `dvp-${process.env.ENV}-credential-contexts`,
-  {
-    acl: aws.s3.PublicReadAcl,
-  }
-);
+if (!(config.hostedZoneDomain && config.contextDomain)) {
+  throw new pulumi.RunError(
+    `Missing one or more of the required environment variables: TARGET_DOMAIN, DVP_CONTEXT_DOMAIN`
+  );
+}
 
-new synced.S3BucketFolder(`dvp-${process.env.ENV}-sync-contexts`, {
-  path: '../artifacts/contexts',
-  bucketName: contextsBucket.bucket,
-  acl: aws.s3.PublicReadAcl,
+export const {
+  websiteBucketName: dvpContextBucketName,
+  websiteCloudfrontAliases: dvpContextCloudfrontAliases,
+} = createS3HostedWebsite({
+  bucketName: "dvpContext",
+  domain: config.contextDomain,
+  hostedZoneDomain: config.hostedZoneDomain,
+  pathToBucketContents: "../artifacts/contexts",
+  auditLogBucket: auditLogBucket,
+  originAccessIdentity: originAccessIdentity,
 });

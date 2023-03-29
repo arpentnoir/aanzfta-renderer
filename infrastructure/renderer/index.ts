@@ -1,3 +1,4 @@
+import * as aws from '@pulumi/aws';
 import * as pulumi from "@pulumi/pulumi";
 import { auditLogBucket } from "../common/auditLogBucket";
 import { originAccessIdentity } from "../common/originAccessIdentity";
