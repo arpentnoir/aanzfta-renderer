@@ -1,8 +1,7 @@
-import React, { FunctionComponent, useState } from 'react';
-import { PrivacyFilter } from '../../common/components/PrivacyFilter/PrivacyFilter';
-import { DocumentSegment, DocumentSummary } from '../../common/components';
 import { TemplateProps } from '@govtechsg/decentralized-renderer-react-components';
 import { v3 } from '@govtechsg/open-attestation';
+import React, { FunctionComponent, useState } from 'react';
+import { DocumentSegment, DocumentSummary } from '../../common/components';
 import { formatDate, getValue } from '../../common/utils/utils';
 
 export interface PostalAddress {
@@ -266,6 +265,9 @@ export const EntityRender: FunctionComponent<{ exporter?: Entity }> = ({
   );
 };
 
+// TODO: Determine if we are adding redaction functionality.
+//       If we aren't, remove PrivacyFilter, handleObfuscation & editable.
+//       If we are, uncomment PrivacyFilter.
 export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<
   AANZFTACertificateOfOriginDoc
 > & {
@@ -282,10 +284,11 @@ export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<
 
   return (
     <div className="AANZFTAContainer">
+      {/* 
       <PrivacyFilter
         editable={editable}
         onToggleEditable={() => setEditable(!editable)}
-      />
+      /> */}
       <div className="text-center mt-4">
         <h1 style={{ fontSize: '0.9em', fontWeight: 'bolder' }}>
           CERTIFICATE OF ORIGIN
