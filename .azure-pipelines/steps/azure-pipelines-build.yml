@@ -1,0 +1,56 @@
+stages:
+  - stage: build
+    jobs:
+      - job: build
+        steps:
+          - script: |
+              ls -l
+              df -h
+              SIZE=$(df -hP / | awk '{print ($4 * 1024)}' |tail -1)
+
+              if [ $SIZE -lt 3000 ]
+              then
+                  echo "Agent does not have enough disk space to continue."
+                  exit 1
+              fi
+            displayName: 'Check disk size'
+
+          - template: install-node-modules.yml
+
+          - bash: |
+              make install
+            displayName: Install deps
+
+          - bash: |
+              make lint
+            displayName: Run linting
+
+          - bash: |
+              make unit-test
+            displayName: Run unit tests
+
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/junit.xml'
+              failTaskOnFailedTests: true
+            displayName: Publish test results to AzDo
+
+          - bash: |
+              make build
+            displayName: Build build
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: $(System.DefaultWorkingDirectory)/renderer/dist
+              artifactName: 'distributed-renderer-build'
+          - task: PublishPipelineArtifact@1
+            condition: succeeded()
+            inputs:
+              targetPath: $(System.DefaultWorkingDirectory)/contexts
+              artifactName: 'contexts'
+          - task: PublishPipelineArtifact@1
+            condition: succeeded()
+            inputs:
+              targetPath: $(System.DefaultWorkingDirectory)/schemas
+              artifactName: 'schemas'                        

@@ -1,0 +1,34 @@
+parameters:
+- name: acceptDeployedEnvironment
+  type: string
+- name: releaseAcceptanceUsers
+  type: string
+- name: waitTimeoutInMinutes
+  type: number
+  default: 34560 # 24 Days
+- name: responseTimeoutInMinutes
+  type: number
+  default: 31680 # 22 Days
+- name: jobName
+  type: string
+- name: dependsOn
+  type: object
+
+
+jobs:
+  - job: ${{ parameters.jobName }}
+    
+    ${{ if parameters.dependsOn }}:
+      dependsOn: ${{ parameters.dependsOn }}
+
+    displayName: 'Accept Release to ${{ parameters.acceptDeployedEnvironment }}'
+    pool: server
+    timeoutInMinutes: ${{ parameters.waitTimeoutInMinutes }}
+    steps:
+      - task: ManualValidation@0
+        timeoutInMinutes: ${{ parameters.responseTimeoutInMinutes }}
+        inputs:
+          notifyUsers: ${{ parameters.releaseAcceptanceUsers }}
+          instructions: 'Please validate the build configuration and resume'
+          onTimeout: reject
+        displayName: Attention Required

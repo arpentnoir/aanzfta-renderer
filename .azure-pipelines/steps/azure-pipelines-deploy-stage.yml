@@ -1,0 +1,74 @@
+parameters:
+  - name: deploymentStages
+    type: object
+    default:
+      - deployEnv: 'E0'
+
+stages:
+- ${{each deploymentStage in parameters.deploymentStages }}:
+
+  - stage:
+    displayName: '${{ deploymentStage.deployEnv }}'
+    variables:
+      - template: '../environments/${{ deploymentStage.deployEnv }}-service-connection-mapping.yml'
+
+    jobs:
+      - deployment: 'deploy_${{ deploymentStage.deployEnv }}'
+        displayName: Deploy to ${{ deploymentStage.deployEnv }} environment
+        environment: '${{ deploymentStage.deployEnv }}'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                  fetchDepth: 2
+                  displayName: Checkout
+
+                - template: install-node-modules.yml
+
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    source: 'current' # Options: current, specific
+                    path: $(System.DefaultWorkingDirectory)/artifacts
+  
+                - bash: |
+                    echo 'productEnvironment: ${{ deploymentStage.deployEnv }}'
+
+                    rm Makefile
+                    cp .azure-pipelines/environments/Makefile-${{deploymentStage.deployEnv}} ./Makefile
+                    make hello-world
+                  displayName: 'Stage Param Details'
+
+                - bash: |
+                    # exit if a command returns a non-zero exit code and also print the commands and their args as they are executed
+                    set -e -x
+
+                    # Download and install required tools pulumi
+                    sudo rm -rf $HOME/.pulumi
+                    sudo rm -rf /usr/local/bin/pulumi*
+                    curl -fsSL https://get.pulumi.com | sh
+                    sudo /bin/cp -rf $HOME/.pulumi/bin/* /usr/local/bin
+
+                    pulumi plugin install resource aws v5.23.0
+                    pulumi plugin install resource synced-folder v0.0.9
+
+                    cd infrastructure && npm install
+                  displayName: 'Setup pulumi'
+
+                - task: AWSShellScript@1
+                  inputs:
+                    awsCredentials: "${{ variables.serviceConnectionMap }}"
+                    regionName: 'ap-southeast-2'
+                    scriptType: 'inline'
+                    inlineScript: |
+                      aws --version
+
+                      make pulumi-up
+                  displayName: 'Execute to deploy resources to AWS'                
+
+      - template: 'azure-pipeline-deploy-authorize-exit.yml'
+        parameters:
+          acceptDeployedEnvironment: '${{ deploymentStage.deployEnv }}'
+          releaseAcceptanceUsers: '[digital-verification-platform]\${{ deploymentStage.deployEnv }} Environment Exit Approvers'
+          jobName: 'exit_authorize_${{ deploymentStage.deployEnv }}'
+          dependsOn: 'deploy_${{ deploymentStage.deployEnv }}'                  

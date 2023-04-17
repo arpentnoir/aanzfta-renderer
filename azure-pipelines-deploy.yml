@@ -1,0 +1,15 @@
+trigger:
+  tags:
+    include:
+    - release*
+
+pool:
+  name: Cloud-bcz-pub
+
+stages:
+  - template: .azure-pipelines/steps/azure-pipelines-build.yml
+
+  - template: .azure-pipelines/steps/azure-pipelines-deploy-stage.yml
+    parameters:
+      deploymentStages:
+        - deployEnv: 'e6'
