@@ -267,13 +267,13 @@ export const EntityRender: FunctionComponent<{ exporter?: Entity }> = ({
 
 // TODO: Determine if we are adding redaction functionality.
 //       If we aren't, remove PrivacyFilter, handleObfuscation & editable.
-//       If we are, uncomment PrivacyFilter.
+//       If we are, uncomment PrivacyFilter & add setEditable to destructured state array.
 export const AANZFTACertificateOfOrigin: FunctionComponent<TemplateProps<
   AANZFTACertificateOfOriginDoc
 > & {
   className?: string;
 }> = ({ document, handleObfuscation }) => {
-  const [editable, setEditable] = useState(false);
+  const [editable] = useState(false);
 
   const supplyChainConsignment =
     document?.credentialSubject?.supplyChainConsignment;
