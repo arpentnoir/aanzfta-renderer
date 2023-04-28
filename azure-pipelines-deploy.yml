@@ -1,12 +1,15 @@
-trigger:
-  tags:
-    include:
-    - release*
+parameters:
+  - name: semver
+    type: string
 
 pool:
   name: Cloud-bcz-pub
 
 stages:
+  - template: .azure-pipelines/steps/azure-pipelines-semver.yml
+    parameters:
+      semver: ${{ parameters.semver }}
+
   - template: .azure-pipelines/steps/azure-pipelines-build.yml
 
   - template: .azure-pipelines/steps/azure-pipelines-deploy-stage.yml
