@@ -14,6 +14,6 @@ type MultipleTemplatesWithComponents = TemplateWithComponent<
 >[];
 
 export const registry: TemplateRegistry<MultipleTemplates> = {
-  AANZFTACoO: AANZFTACoO as MultipleTemplatesWithComponents,
-  AANZFTACoOPartial: AANZFTACoOPartial as MultipleTemplatesWithComponents
+  'AANZFTA-COO': AANZFTACoO as MultipleTemplatesWithComponents,
+  'AANZFTA-COO-Partial': AANZFTACoOPartial as MultipleTemplatesWithComponents
 };
