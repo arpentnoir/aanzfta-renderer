@@ -30,80 +30,8 @@ variables:
   HEAD_SHA: $(git rev-parse HEAD)
 
 stages:
-  - stage: build
-    jobs:
-      - job: build
-        steps:
-          - script: |
-              df -h
-              SIZE=$(df -hP / | awk '{print ($4 * 1024)}' |tail -1)
+  - template: .azure-pipelines/steps/azure-pipelines-build.yml
 
-              if [ $SIZE -lt 3000 ]
-              then
-                  echo "Agent does not have enough disk space to continue."
-                  exit 1
-              fi
-            displayName: 'Check disk size'
-
-          - checkout: self
-            fetchDepth: 2
-            displayName: Checkout
-
-          - template: .azure-pipelines/steps/install-node-modules.yml
-
-          - bash: |
-              make install
-            displayName: Install deps
-
-          - bash: |
-              make lint
-            displayName: Run linting
-
-          - bash: |
-              make unit-test
-            displayName: Run unit tests
-
-          - task: PublishTestResults@2
-            inputs:
-              testResultsFormat: 'JUnit'
-              testResultsFiles: '**/junit.xml'
-              failTaskOnFailedTests: true
-            displayName: Publish test results to AzDo
-
-#          - task: reportgenerator@5
-#            inputs:
-#              reports: '**/cobertura-coverage.xml'
-#              reporttypes: 'HtmlInline_AzurePipelines;Cobertura'
-#              targetdir: '$(System.DefaultWorkingDirectory)/Coverage'
-#            displayName: 'Generate code coverage results'
-
-#          - task: PublishCodeCoverageResults@1
-#            inputs:
-#              codeCoverageTool: 'Cobertura'
-#              summaryFileLocation: '$(System.DefaultWorkingDirectory)/Coverage/Cobertura.xml'
-#              reportDirectory: '$(System.DefaultWorkingDirectory)/Coverage'
-#              failTaskOnFailedTests: true
-#            displayName: Publish code coverage results to AzDo
-
-          - bash: |
-              make build
-            displayName: Build build
-
-          - task: PublishPipelineArtifact@1
-            condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
-            inputs:
-              targetPath: $(System.DefaultWorkingDirectory)/renderer/dist
-              artifactName: 'distributed-renderer-build'
-          - task: PublishPipelineArtifact@1
-            condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
-            inputs:
-              targetPath: $(System.DefaultWorkingDirectory)/contexts
-              artifactName: 'contexts'
-          - task: PublishPipelineArtifact@1
-            condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
-            inputs:
-              targetPath: $(System.DefaultWorkingDirectory)/schemas
-              artifactName: 'schemas'
   - stage: deploy
     dependsOn: build
     condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
@@ -120,33 +48,26 @@ stages:
 
             - task: DownloadPipelineArtifact@2
               inputs:
-                source: 'current' # Options: current, specific
+                source: 'current'
                 path: $(System.DefaultWorkingDirectory)/artifacts
 
             - template: .azure-pipelines/steps/install-node-modules.yml
 
-            - task: AWSShellScript@1
-              displayName: Setup pulumi
-              env:
-                ENV: ${{ variables.TARGET_ENV }}
-              inputs:
-                awsCredentials: 'aws-dvp-nonprod'
-                regionName: 'ap-southeast-2'
-                scriptType: 'inline'
-                inlineScript: |                  
-                  # exit if a command returns a non-zero exit code and also print the commands and their args as they are executed
-                  set -e -x
+            - bash:
+                curl -fsSL https://get.pulumi.com | sh -s -- --version 3.60.0
+              displayName: 'Install pulumi'
 
-                  # Download and install required tools pulumi
-                  sudo rm -rf $HOME/.pulumi
-                  sudo rm -rf /usr/local/bin/pulumi*
-                  curl -fsSL https://get.pulumi.com | sh -s -- --version 3.60.0
-                  sudo /bin/cp -rf $HOME/.pulumi/bin/* /usr/local/bin
+            - bash: |
+                # exit if a command returns a non-zero exit code and also print the commands and their args as they are executed
+                set -e -x
 
-                  pulumi plugin install resource aws v5.23.0
-                  pulumi plugin install resource synced-folder v0.0.9
+                export PATH="$PATH:/home/AzDevOps/.pulumi/bin"
 
-                  cd infrastructure && npm install
+                pulumi plugin install resource aws v5.23.0
+                pulumi plugin install resource synced-folder v0.0.9
+
+                cd infrastructure && npm install
+              displayName: 'Setup pulumi'
 
             - task: AWSShellScript@1
               displayName: Deploy
@@ -157,4 +78,5 @@ stages:
                 regionName: 'ap-southeast-2'
                 scriptType: 'inline'
                 inlineScript: |
+                  export PATH="$PATH:/home/AzDevOps/.pulumi/bin"
                   make pulumi-up

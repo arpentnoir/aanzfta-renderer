@@ -24,6 +24,13 @@ export const auditLogBucket = new Components.aws.S3Bucket(
   }
 );
 
+const s3AuditLogOwnership = new aws.s3.BucketOwnershipControls(`${config.dvpStack}-audit-logs-ownership`, {
+  bucket: auditLogBucket.bucket.id,
+  rule: {
+    objectOwnership: "ObjectWriter",
+  }
+});
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const auditLogBucketPolicy = new aws.s3.BucketPolicy(`auditLog-bucket-policy`, {
   bucket: auditLogBucket.bucket.bucket, // refer to the bucket created earlier

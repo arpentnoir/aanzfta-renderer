@@ -23,6 +23,8 @@ elif [ $1 = "up" ]; then
     pulumi up -s ${APP_NAME}-${ENV} --yes --non-interactive -C infrastructure/;
 elif [ $1 = "destroy" ]; then
     pulumi destroy -s ${APP_NAME}-${ENV} --yes --non-interactive -C infrastructure/;
+elif [ $1 = "cancel" ]; then
+    pulumi cancel -s ${APP_NAME}-${ENV} --yes --non-interactive -C infrastructure/;
 else
-  echo "Invalid input arg. Must be one of: ['preview', 'up', 'destroy']"
+  echo "Invalid input arg. Must be one of: ['preview', 'up', 'destroy', 'cancel']"
 fi

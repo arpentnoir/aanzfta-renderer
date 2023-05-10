@@ -28,7 +28,7 @@ stages:
 
                 - task: DownloadPipelineArtifact@2
                   inputs:
-                    source: 'current' # Options: current, specific
+                    source: 'current'
                     path: $(System.DefaultWorkingDirectory)/artifacts
   
                 - bash: |
@@ -39,15 +39,15 @@ stages:
                     make hello-world
                   displayName: 'Stage Param Details'
 
+                - bash:
+                    curl -fsSL https://get.pulumi.com | sh -s -- --version 3.60.0
+                  displayName: 'Install pulumi'
+
                 - bash: |
                     # exit if a command returns a non-zero exit code and also print the commands and their args as they are executed
                     set -e -x
 
-                    # Download and install required tools pulumi
-                    sudo rm -rf $HOME/.pulumi
-                    sudo rm -rf /usr/local/bin/pulumi*
-                    curl -fsSL https://get.pulumi.com | sh
-                    sudo /bin/cp -rf $HOME/.pulumi/bin/* /usr/local/bin
+                    export PATH="$PATH:/home/AzDevOps/.pulumi/bin"
 
                     pulumi plugin install resource aws v5.23.0
                     pulumi plugin install resource synced-folder v0.0.9
@@ -63,6 +63,8 @@ stages:
                     inlineScript: |
                       aws --version
 
+                      export PATH="$PATH:/home/AzDevOps/.pulumi/bin"
+
                       make pulumi-up
                   displayName: 'Execute to deploy resources to AWS'                
 
@@ -71,4 +73,4 @@ stages:
           acceptDeployedEnvironment: '${{ deploymentStage.deployEnv }}'
           releaseAcceptanceUsers: '[digital-verification-platform]\${{ deploymentStage.deployEnv }} Environment Exit Approvers'
           jobName: 'exit_authorize_${{ deploymentStage.deployEnv }}'
-          dependsOn: 'deploy_${{ deploymentStage.deployEnv }}'                  
+          dependsOn: 'deploy_${{ deploymentStage.deployEnv }}'

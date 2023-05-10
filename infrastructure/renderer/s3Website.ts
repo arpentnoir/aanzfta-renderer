@@ -27,7 +27,7 @@ export const createS3HostedWebsite = (config: S3HostedWebsiteConfig) => {
     domainName: config.domain,
     validationMethod: "DNS",
   });
-  
+
   // Create S3 Bucket and Cloudfront Distribution for `dvpWebsite`
   const websiteS3Bucket = new Components.aws.S3Bucket(
     `${config.bucketName}S3Bucket`,

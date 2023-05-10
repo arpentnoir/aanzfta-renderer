@@ -3,7 +3,7 @@ SHELL := /bin/bash
 # Default env variables
 
 APP_NAME = ha-dvp-schema-registry
-ENV ?= e1
+ENV ?= e2
 
 AWS_REGION ?= ap-southeast-2
 AWS_ACCOUNT_ID ?= 636729270584
@@ -15,26 +15,6 @@ DVP_RENDERER_DOMAIN ?= renderer.${ENV}.${TARGET_DOMAIN}
 DVP_CONTEXT_DOMAIN ?= context.${ENV}.${TARGET_DOMAIN}
 
 .EXPORT_ALL_VARIABLES: ; # send all vars to shell
-
-install:
-	cd renderer && yarn install
-
-lint:
-	cd renderer && yarn lint
-
-unit-test:
-	cd renderer && yarn test
-
-build:
-	cd renderer && yarn build
-
-# helper command to create a `artifacts` dir locally (mirroring what happens in CI pipeline)
-create-artifacts-locally:
-	mkdir -p ./artifacts
-	cp -r ./renderer/dist/. ./artifacts/distributed-renderer-build/
-	cp -r ./contexts/. ./artifacts/contexts/
-	cp -r ./schemas/. ./artifacts/schemas/
-
 
 ### Deployment
 pulumi-preview:
@@ -48,4 +28,6 @@ pulumi-destroy:
 
 pulumi-cancel:
 	. scripts/run-pulumi.sh cancel	
-	
+
+hello-world:
+	echo 'hello world e2'
