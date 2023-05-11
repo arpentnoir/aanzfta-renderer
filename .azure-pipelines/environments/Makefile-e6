@@ -25,6 +25,3 @@ pulumi-up:
 
 pulumi-destroy:
 	. scripts/run-pulumi.sh destroy
-
-hello-world:
-	echo 'hello world e6'

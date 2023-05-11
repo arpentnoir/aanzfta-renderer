@@ -28,6 +28,3 @@ pulumi-destroy:
 
 pulumi-cancel:
 	. scripts/run-pulumi.sh cancel	
-
-hello-world:
-	echo 'hello world e2'

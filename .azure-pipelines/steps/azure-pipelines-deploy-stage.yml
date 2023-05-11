@@ -32,12 +32,9 @@ stages:
                     path: $(System.DefaultWorkingDirectory)/artifacts
   
                 - bash: |
-                    echo 'productEnvironment: ${{ deploymentStage.deployEnv }}'
-
                     rm Makefile
                     cp .azure-pipelines/environments/Makefile-${{deploymentStage.deployEnv}} ./Makefile
-                    make hello-world
-                  displayName: 'Stage Param Details'
+                  displayName: 'Set environment configuration'
 
                 - bash:
                     curl -fsSL https://get.pulumi.com | sh -s -- --version 3.60.0
