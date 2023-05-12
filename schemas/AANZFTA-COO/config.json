@@ -1,0 +1,14 @@
+{
+  "name": "AANZFTA-COO",
+  "displayName": "AANZFTA Certificate of Origin",
+  "formTitle": "ASEAN–Australia–New Zealand Free Trade Agreement",
+  "formSubTitle": "Certificate of Origin",
+  "renderTemplate": {
+    "full": "AANZFTA-COO",
+    "partial": "AANZFTA-COO-Partial"
+  },
+  "context": {
+    "full": "/AANZFTA-CoO.json",
+    "partial": "/AANZFTA-CoO-Context-Partial.json"
+  }
+}

@@ -7,19 +7,8 @@ const dvpStack = pulumi.getStack();
 export const schemasBucket = new aws.s3.Bucket(
   `dvp-${process.env.ENV}-credential-schemas`,
   {
+    bucket: `dvp-${process.env.ENV}-credential-schemas`,
     acl: aws.s3.PrivateAcl,
-  }
-);
-
-export const syncedS3BucketFolder = new synced.S3BucketFolder(
-  `dvp-${process.env.ENV}-sync-schemas`,
-  {
-    path: '../artifacts/schemas',
-    bucketName: pulumi.interpolate`${schemasBucket.bucket}`,
-    acl: aws.s3.PrivateAcl,
-  },
-  {
-    dependsOn: [schemasBucket],
   }
 );
 
@@ -43,9 +32,10 @@ export const schemasBucketNotificationQueue = new aws.sqs.Queue(
     }`,
   },
   {
-    dependsOn: [syncedS3BucketFolder],
+    dependsOn: [schemasBucket],
   }
 );
+
 export const schemasBucketNotification = new aws.s3.BucketNotification(
   `dvp-${process.env.ENV}-credential-schemas-notification`,
   {
@@ -60,5 +50,17 @@ export const schemasBucketNotification = new aws.s3.BucketNotification(
   },
   {
     dependsOn: [schemasBucketNotificationQueue],
+  }
+);
+
+export const syncedS3BucketFolder = new synced.S3BucketFolder(
+  `dvp-${process.env.ENV}-sync-schemas`,
+  {
+    path: '../artifacts/schemas',
+    bucketName: pulumi.interpolate`${schemasBucket.bucket}`,
+    acl: aws.s3.PrivateAcl,
+  },
+  {
+    dependsOn: [schemasBucketNotification],
   }
 );
