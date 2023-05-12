@@ -17,4 +17,5 @@ stages:
   - template: .azure-pipelines/steps/azure-pipelines-deploy-stage.yml
     parameters:
       deploymentStages:
+        - deployEnv: 'e4'
         - deployEnv: 'e6'

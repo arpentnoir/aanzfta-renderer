@@ -17,6 +17,7 @@ parameters:
 
 jobs:
   - job: ${{ parameters.jobName }}
+    condition: ne('${{ parameters.acceptDeployedEnvironment }}', 'e4')
     
     ${{ if parameters.dependsOn }}:
       dependsOn: ${{ parameters.dependsOn }}

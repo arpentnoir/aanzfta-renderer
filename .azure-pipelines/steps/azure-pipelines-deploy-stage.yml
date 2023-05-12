@@ -63,7 +63,7 @@ stages:
                       export PATH="$PATH:/home/AzDevOps/.pulumi/bin"
 
                       make pulumi-up
-                  displayName: 'Execute to deploy resources to AWS'                
+                  displayName: 'Execute to deploy resources to AWS'
 
       - template: 'azure-pipeline-deploy-authorize-exit.yml'
         parameters:

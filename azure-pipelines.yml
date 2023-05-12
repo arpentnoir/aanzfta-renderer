@@ -14,12 +14,7 @@ variables:
   isMain: $[eq(variables['Build.SourceBranch'], 'refs/heads/main')]
   isDevelop: $[eq(variables['Build.SourceBranch'], 'refs/heads/develop')]
   isPR: $[eq(variables['Build.Reason'], 'PullRequest')]
-  ${{ if eq(variables.isMain, 'true') }}:
-    TARGET_ENV: e4 # deploy master to test environment
-  ${{ elseif eq(variables.isDevelop, 'true') }}:
-    TARGET_ENV: e1 # deploy develop to e1 environment
-  ${{ else }}:
-    TARGET_ENV: e1 # set default TARGET_ENV to e1
+  TARGET_ENV: e1
   ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
     NX_BRANCH: $(System.PullRequest.PullRequestNumber)
     TARGET_BRANCH: $[replace(variables['System.PullRequest.TargetBranch'],'refs/heads/','origin/')]
