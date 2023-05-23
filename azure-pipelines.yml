@@ -5,7 +5,6 @@ pr:
   - main
   - develop
 
-
 pool:
   name: Cloud-bcz-pub
 
@@ -31,47 +30,46 @@ stages:
     dependsOn: build
     condition: and(succeeded(), or(eq(variables.isMain, 'true'), eq(variables.isDevelop, 'true')))
     jobs:
-    - deployment: DeploySchema
-      displayName: deploy Schema
-      environment: ${{ variables.TARGET_ENV }}
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - script: df -h
-              displayName: 'Check disk size'
+      - deployment: DeploySchema
+        displayName: deploy Schema
+        environment: ${{ variables.TARGET_ENV }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - script: df -h
+                  displayName: 'Check disk size'
 
-            - task: DownloadPipelineArtifact@2
-              inputs:
-                source: 'current'
-                path: $(System.DefaultWorkingDirectory)/artifacts
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    source: 'current'
+                    path: $(System.DefaultWorkingDirectory)/artifacts
 
-            - template: .azure-pipelines/steps/install-node-modules.yml
+                - template: .azure-pipelines/steps/install-node-modules.yml
 
-            - bash:
-                curl -fsSL https://get.pulumi.com | sh -s -- --version 3.60.0
-              displayName: 'Install pulumi'
+                - bash: curl -fsSL https://get.pulumi.com | sh -s -- --version 3.60.0
+                  displayName: 'Install pulumi'
 
-            - bash: |
-                # exit if a command returns a non-zero exit code and also print the commands and their args as they are executed
-                set -e -x
+                - bash: |
+                    # exit if a command returns a non-zero exit code and also print the commands and their args as they are executed
+                    set -e -x
 
-                export PATH="$PATH:/home/AzDevOps/.pulumi/bin"
+                    export PATH="$PATH:/home/AzDevOps/.pulumi/bin"
 
-                pulumi plugin install resource aws v5.23.0
-                pulumi plugin install resource synced-folder v0.0.9
+                    pulumi plugin install resource aws v5.23.0
+                    pulumi plugin install resource synced-folder v0.0.9
 
-                cd infrastructure && npm install
-              displayName: 'Setup pulumi'
+                    cd infrastructure && npm install
+                  displayName: 'Setup pulumi'
 
-            - task: AWSShellScript@1
-              displayName: Deploy
-              env:
-                ENV: ${{ variables.TARGET_ENV }}
-              inputs:
-                awsCredentials: 'aws-dvp-nonprod'
-                regionName: 'ap-southeast-2'
-                scriptType: 'inline'
-                inlineScript: |
-                  export PATH="$PATH:/home/AzDevOps/.pulumi/bin"
-                  make pulumi-up
+                - task: AWSShellScript@1
+                  displayName: Deploy
+                  env:
+                    ENV: ${{ variables.TARGET_ENV }}
+                  inputs:
+                    awsCredentials: 'aws-dvp-nonprod'
+                    regionName: 'ap-southeast-2'
+                    scriptType: 'inline'
+                    inlineScript: |
+                      export PATH="$PATH:/home/AzDevOps/.pulumi/bin"
+                      make pulumi-up

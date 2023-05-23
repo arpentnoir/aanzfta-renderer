@@ -7,8 +7,8 @@
   "dependencies": {
     "@pulumi/aws": "5.27.0",
     "@pulumi/awsx": "1.0.1",
+    "@pulumi/command": "^0.7.2",
     "@pulumi/pulumi": "3.52.1",
-    "@pulumi/synced-folder": "0.0.9",
     "fs": "0.0.1-security",
     "gs-pulumi-library": "^0.2.4",
     "mime-types": "^2.1.35",

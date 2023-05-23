@@ -271,6 +271,13 @@
     "@types/aws-lambda" "8.10.93"
     mime "^2.0.0"
 
+"@pulumi/command@^0.7.2":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@pulumi/command/-/command-0.7.2.tgz#f0ca9dd398525aa04c36ba0bec053879c18c8afe"
+  integrity sha512-R/eAIXIywSkn2cHIaNqs0EXcXduNeDuS+wom6oadB5KEP+6elgJbo4WMDP+OuDYGkkxEWIKjk0bPPO7570aXFQ==
+  dependencies:
+    "@pulumi/pulumi" "^3.0.0"
+
 "@pulumi/docker@^3.0.0", "@pulumi/docker@^3.6.1":
   version "3.6.1"
   resolved "https://registry.yarnpkg.com/@pulumi/docker/-/docker-3.6.1.tgz#a216c9bd2bbd35dd7091db2827a3a434adff021c"
@@ -356,13 +363,6 @@
   version "4.8.2"
   resolved "https://registry.yarnpkg.com/@pulumi/random/-/random-4.8.2.tgz#d2654416f973a29a8ff439cd03449b6a08bd8e59"
   integrity sha512-XDQ2OV+VW5Bpn9nxVqsEiKD3DAEeMd8ngZPLpioJWCiHzsBMSrYfP97MkdGDaBsDvS6/NL1Bvk0VQXXooFl3Yw==
-  dependencies:
-    "@pulumi/pulumi" "^3.0.0"
-
-"@pulumi/synced-folder@0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@pulumi/synced-folder/-/synced-folder-0.0.9.tgz#07771ada15685fb3f325defeeb1c99967015c036"
-  integrity sha512-kih9dngzZrgBQpu8O8VraQw8IR96OoCHFoGynuKCZBL9/kV3noy23OyCo9OvGxbDOHrgsuROibt4jhmStEQXIA==
   dependencies:
     "@pulumi/pulumi" "^3.0.0"
 
@@ -812,10 +812,10 @@ graceful-fs@^4.1.2:
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.10.tgz#147d3a006da4ca3ce14728c7aefc287c367d7a6c"
   integrity sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==
 
-gs-pulumi-library@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/gs-pulumi-library/-/gs-pulumi-library-0.2.3.tgz#abc8a63e7f8550830ffcff8b8a263009a57f2162"
-  integrity sha512-87slE4CuEVm8bEgBTXLVS8e7eveLCPXryy6XMN78nZRqTAE0Mnco3alCTuxyajbt978xktXCynA/NnRK5663Ig==
+gs-pulumi-library@^0.2.4:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/gs-pulumi-library/-/gs-pulumi-library-0.2.5.tgz#da7d1939c0d88e9b67138b8ac278ae4beff050dd"
+  integrity sha512-iaLcl7/2tMBrM75Cc3DrtmiDcykve+rKmpKC4D0KQIDf8oAprLyLfVyOuHnTm6KARbapv1Sy4g0cpyTg/5uNLg==
   dependencies:
     "@pulumi/aws" "^5.0.0"
     "@pulumi/awsguard" "^0.3.1"
